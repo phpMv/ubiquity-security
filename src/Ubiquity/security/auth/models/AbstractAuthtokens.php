@@ -103,6 +103,10 @@ abstract class AbstractAuthtokens {
 		return $this->expires->getTimestamp() < (new \DateTime())->getTimestamp();
 	}
 
+	public function checkValidator($validator) {
+		return hash_equals($this->hashedValidator, $validator);
+	}
+
 	/**
 	 *
 	 * @return mixed
@@ -116,6 +120,6 @@ abstract class AbstractAuthtokens {
 	abstract public function setUser($user);
 
 	public function __toString() {
-		return ($this->userid ?? 'no value') . '';
+		return $this->selector . ':' . $this->hashedValidator;
 	}
 }
