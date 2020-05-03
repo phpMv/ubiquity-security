@@ -78,7 +78,7 @@ class UCsrfHttp {
 	 */
 	public static function addCookieToken(string $name, string $path = '/', bool $secure = true, bool $httpOnly = true): bool {
 		$token = CsrfManager::getToken($name);
-		return UCookie::set(self::COOKIE_KEY . '[' . $token->getId() . ']', $token->getValue(), $path, $secure, $httpOnly);
+		return UCookie::set(self::COOKIE_KEY . '[' . $token->getId() . ']', $token->getValue(), null, $path, $secure, $httpOnly);
 	}
 }
 
