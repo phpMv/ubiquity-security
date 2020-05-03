@@ -13,6 +13,8 @@ use Ubiquity\utils\http\UCookie;
  */
 class UCsrfHttp {
 
+	private static const COOKIE_KEY = 'X-XSRF-TOKEN';
+
 	/**
 	 * Returns whether the given CSRF token is present and valid in POST values, given his name.
 	 *
@@ -35,7 +37,9 @@ class UCsrfHttp {
 	 */
 	public static function isValidCookie(string $name): bool {
 		$id = CsrfManager::getSelector($name);
-		$value = UCookie::get($id, null);
+		$value = UCookie::get(self::COOKIE_KEY, [
+			$id => null
+		])[$id];
 		if (isset($value)) {
 			return CsrfManager::isValid($id, $value);
 		}
@@ -74,7 +78,7 @@ class UCsrfHttp {
 	 */
 	public static function addCookieToken(string $name, string $path = '/', bool $secure = true, bool $httpOnly = true): bool {
 		$token = CsrfManager::getToken($name);
-		return UCookie::set($token->getId(), $token->getValue(), $path, $secure, $httpOnly);
+		return UCookie::set(self::COOKIE_KEY . '[' . $token->getId() . ']', $token->getValue(), $path, $secure, $httpOnly);
 	}
 }
 
