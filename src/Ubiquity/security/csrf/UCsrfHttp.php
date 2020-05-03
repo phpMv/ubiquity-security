@@ -1,7 +1,6 @@
 <?php
 namespace Ubiquity\security\csrf;
 
-use Ubiquity\utils\http\UResponse;
 use Ubiquity\utils\http\UCookie;
 
 /**
@@ -29,21 +28,6 @@ class UCsrfHttp {
 	}
 
 	/**
-	 * Returns whether the given CSRF token is present and valid in header, given his name.
-	 *
-	 * @param string $name
-	 * @return bool
-	 */
-	public static function isValidHeader(string $name): bool {
-		$id = CsrfManager::getSelector($name);
-
-		if (isset($_SERVER['HTTP_' . $id])) {
-			return CsrfManager::isValid($id, $_SERVER['HTTP_' . $id]);
-		}
-		return false;
-	}
-
-	/**
 	 * Returns whether the given CSRF token is present and valid in cookies, given his name.
 	 *
 	 * @param string $name
@@ -63,9 +47,9 @@ class UCsrfHttp {
 	 *
 	 * @param string $name
 	 */
-	public static function addHeaderToken(string $name): void {
+	public static function getTokenMeta(string $name): string {
 		$token = CsrfManager::getToken($name);
-		UResponse::header($token->getId(), $token->getValue());
+		return "<meta name='csrf-token' content='{$token->getId()}:{$token->getValue()}'>";
 	}
 
 	/**
@@ -83,10 +67,14 @@ class UCsrfHttp {
 	 * Adds a token in cookies.
 	 *
 	 * @param string $name
+	 * @param string $path
+	 * @param bool $secure
+	 * @param bool $httpOnly
+	 * @return bool
 	 */
-	public static function addCookieToken(string $name): void {
+	public static function addCookieToken(string $name, string $path = '/', bool $secure = true, bool $httpOnly = true): bool {
 		$token = CsrfManager::getToken($name);
-		UCookie::set($token->getId(), $token->getValue());
+		return UCookie::set($token->getId(), $token->getValue(), $path, $secure, $httpOnly);
 	}
 }
 
