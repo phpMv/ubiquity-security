@@ -13,23 +13,23 @@ class SessionTokenStorage implements TokenStorageInterface {
 		return $this->key . '/' . $id;
 	}
 
-	public function __construct($key = '_CSRF') {
+	public function __construct(string $key = '_CSRF') {
 		$this->key = $key;
 	}
 
-	public function set($id, $token) {
+	public function set(string $id, string $token): void {
 		USession::set($this->getKey($id), $token);
 	}
 
-	public function get($id) {
+	public function get(string $id): string {
 		return USession::get($this->getKey($id));
 	}
 
-	public function exists($id) {
+	public function exists(string $id): bool {
 		return USession::exists($this->getKey($id));
 	}
 
-	public function remove($id) {
+	public function remove(string $id): ?string {
 		return USession::delete($this->getKey($id));
 	}
 }
