@@ -21,7 +21,7 @@ class SessionTokenStorage implements TokenStorageInterface {
 		USession::set($this->getKey($id), $token);
 	}
 
-	public function get(string $id): string {
+	public function get(string $id): ?string {
 		return USession::get($this->getKey($id));
 	}
 

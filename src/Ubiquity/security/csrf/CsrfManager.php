@@ -49,7 +49,12 @@ class CsrfManager {
 	 */
 	public static function getToken($name) {
 		$id = self::$selector->generate($name);
-		$value = self::$storage->get($id) ?? self::$validator->generate();
+		if (self::$storage->exists($id)) {
+			$value = self::$storage->get($id);
+		} else {
+			$value = self::$validator->generate();
+			self::$storage->set($id, $value);
+		}
 		return new UToken($id, $value);
 	}
 

@@ -23,7 +23,7 @@ class UCsrfHttp {
 	public static function isValidPost(string $name): bool {
 		$id = CsrfManager::getSelector($name);
 		if (isset($_POST[$id])) {
-			return CsrfManager::isValidToken($id, $_POST[$id]);
+			return CsrfManager::isValid($id, $_POST[$id]);
 		}
 		return false;
 	}
@@ -38,7 +38,7 @@ class UCsrfHttp {
 		$id = CsrfManager::getSelector($name);
 
 		if (isset($_SERVER['HTTP_' . $id])) {
-			return CsrfManager::isValidToken($id, $_SERVER['HTTP_' . $id]);
+			return CsrfManager::isValid($id, $_SERVER['HTTP_' . $id]);
 		}
 		return false;
 	}
@@ -53,7 +53,7 @@ class UCsrfHttp {
 		$id = CsrfManager::getSelector($name);
 		$value = UCookie::get($id, null);
 		if (isset($value)) {
-			return CsrfManager::isValidToken($id, $value);
+			return CsrfManager::isValid($id, $value);
 		}
 		return false;
 	}

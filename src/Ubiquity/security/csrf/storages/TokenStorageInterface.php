@@ -9,7 +9,7 @@ interface TokenStorageInterface {
 	 * @return string The stored token
 	 *
 	 */
-	public function get(string $id): string;
+	public function get(string $id): ?string;
 
 	/**
 	 * Stores a CSRF token.
