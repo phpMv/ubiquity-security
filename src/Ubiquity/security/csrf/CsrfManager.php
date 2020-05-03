@@ -1,11 +1,11 @@
 <?php
 namespace Ubiquity\security\csrf;
 
-use Ubiquity\security\csrf\genetators\GeneratorInterface;
-use src\Ubiquity\security\csrf\generators\RandomValidator;
 use Ubiquity\security\csrf\storages\TokenStorageInterface;
 use Ubiquity\security\csrf\storages\SessionTokenStorage;
 use Ubiquity\security\csrf\generators\Md5Selector;
+use Ubiquity\security\csrf\generators\GeneratorInterface;
+use Ubiquity\security\csrf\generators\RandomValidator;
 
 /**
  * Ubiquity\security\csrf$CsrfManager
@@ -35,14 +35,14 @@ class CsrfManager {
 	 */
 	private static $storage;
 
-	public static function start(TokenStorageInterface $storage, GeneratorInterface $selector = null, GeneratorInterface $validator = null) {
+	public static function start(TokenStorageInterface $storage = null, GeneratorInterface $selector = null, GeneratorInterface $validator = null) {
 		self::$selector ??= new Md5Selector();
 		self::$validator ??= new RandomValidator();
 		self::$storage ??= new SessionTokenStorage();
 	}
 
 	/**
-	 * Generates or retrieve and return a token
+	 * Generates or retrieve and return a token.
 	 *
 	 * @param string $name
 	 * @return \Ubiquity\security\csrf\UToken

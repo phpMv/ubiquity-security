@@ -1,5 +1,5 @@
 <?php
-namespace Ubiquity\security\csrf\genetators;
+namespace Ubiquity\security\csrf\generators;
 
 interface GeneratorInterface {
 

@@ -1,7 +1,5 @@
 <?php
-namespace src\Ubiquity\security\csrf\generators;
-
-use Ubiquity\security\csrf\genetators\GeneratorInterface;
+namespace Ubiquity\security\csrf\generators;
 
 class RandomValidator implements GeneratorInterface {
 
