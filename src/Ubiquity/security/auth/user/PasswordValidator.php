@@ -25,7 +25,7 @@ class PasswordValidator extends LengthValidator {
 
 	protected $specialChar;
 
-	protected $charset = "UTF-8";
+	protected $charset = 'UTF-8';
 
 	protected const PASSWORD_CONSTRAINTS = [
 		'upperCase',
@@ -36,35 +36,36 @@ class PasswordValidator extends LengthValidator {
 	public function __construct() {
 		parent::__construct();
 		$this->message = array_merge($this->message, [
-			"min" => "This value cannot be longer than {max} characters",
-			"exact" => "This value should have exactly {min} characters.",
-			"charset" => "This value is not in {charset} charset",
-			"upperCase" => "This value must contain at least {upperCase} uppercase characters",
-			"numeric" => "This value must contain at least {numeric} numeric characters",
-			"specialChar" => "This value must contain at least {specialChar} special characters"
+			'min' => 'This value cannot be longer than {max} characters.',
+			'exact' => 'This value should have exactly {min} characters.',
+			'charset' => 'This value is not in {charset} charset.',
+			'upperCase' => 'This value must contain at least {upperCase} uppercase characters.',
+			'numeric' => 'This value must contain at least {numeric} numeric characters.',
+			'specialChar' => 'This value must contain at least {specialChar} special characters.'
 		]);
 	}
 
-	protected function getCallables() {
+	protected function getCallbacks() {
 		return [
 			'upperCase' => function ($c) {
-				return ctype_alpha($c) && strtoupper($c) === $c;
+				return \ctype_alpha($c) && \strtoupper($c) === $c;
 			},
 			'numeric' => function ($c) {
-				return is_numeric($c);
+				return \is_numeric($c);
 			},
 			'specialChar' => function ($c) {
-				return strpos($c, "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~") !== false;
+				return \strpos("!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~", $c) !== false;
 			}
 		];
 	}
 
 	protected function getLengths($string) {
-		$result = array_combine(self::PASSWORD_CONSTRAINTS, array_fill(0, count(self::PASSWORD_CONSTRAINTS), 0));
-		$size = strlen($string);
+		$result = \array_combine(self::PASSWORD_CONSTRAINTS, \array_fill(0, \count(self::PASSWORD_CONSTRAINTS), 0));
+		$size = \strlen($string);
+		$callbacks = $this->getCallbacks();
 		for ($i = 0; $i < $size; $i ++) {
 			$c = $string[$i];
-			foreach ($this->getCallables() as $key => $callback) {
+			foreach ($callbacks as $key => $callback) {
 				if ($callback($c)) {
 					$result[$key] ++;
 				}
@@ -85,6 +86,7 @@ class PasswordValidator extends LengthValidator {
 				return false;
 			}
 		}
+		return true;
 	}
 
 	/**
