@@ -95,7 +95,7 @@ class PasswordValidator extends LengthValidator {
 	 * @see \Ubiquity\contents\validation\validators\Validator::getParameters()
 	 */
 	public function getParameters(): array {
-		\array_merge(parent::getParameters(), self::PASSWORD_CONSTRAINTS);
+		return \array_merge(parent::getParameters(), self::PASSWORD_CONSTRAINTS);
 	}
 }
 
