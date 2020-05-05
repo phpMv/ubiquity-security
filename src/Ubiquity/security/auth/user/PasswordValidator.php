@@ -36,8 +36,8 @@ class PasswordValidator extends LengthValidator {
 	public function __construct() {
 		parent::__construct();
 		$this->message = array_merge($this->message, [
-			'min' => 'This value cannot be longer than {max} characters.',
-			'exact' => 'This value should have exactly {min} characters.',
+			'max' => 'This value cannot be longer than {max} characters.',
+			'min' => 'This value should have at least {min} characters.',
 			'charset' => 'This value is not in {charset} charset.',
 			'upperCase' => 'This value must contain at least {upperCase} uppercase characters.',
 			'numeric' => 'This value must contain at least {numeric} numeric characters.',
@@ -95,7 +95,7 @@ class PasswordValidator extends LengthValidator {
 	 * @see \Ubiquity\contents\validation\validators\Validator::getParameters()
 	 */
 	public function getParameters(): array {
-		return parent::getParameters() + self::PASSWORD_CONSTRAINTS;
+		\array_merge(parent::getParameters(), self::PASSWORD_CONSTRAINTS);
 	}
 }
 
