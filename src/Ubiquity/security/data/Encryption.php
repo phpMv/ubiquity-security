@@ -7,9 +7,11 @@ use Ubiquity\exceptions\DecryptException;
 /**
  * Ubiquity\security\data$Encryption
  * This class is part of Ubiquity
+ * Inspired from illuminate/encryption package
  *
  * @author jc
  * @version 1.0.0
+ *
  *
  */
 class Encryption {
@@ -180,8 +182,8 @@ class Encryption {
 	 * @return bool
 	 */
 	public static function isValidKey(string $key, string $cipher): bool {
-		$length = \mb_strlen($key, '8bit');
-		return ($cipher === self::AES128 && $length === 16) || ($cipher === self::AES256 && $length === 32);
+		$length = \strlen($key);
+		return ($cipher === self::AES128 && $length === 32) || ($cipher === self::AES256 && $length === 64);
 	}
 
 	/**
