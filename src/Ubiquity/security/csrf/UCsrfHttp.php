@@ -13,7 +13,7 @@ use Ubiquity\utils\http\UCookie;
  */
 class UCsrfHttp {
 
-	private static const COOKIE_KEY = 'X-XSRF-TOKEN';
+	private const COOKIE_KEY = 'X-XSRF-TOKEN';
 
 	/**
 	 * Returns whether the given CSRF token is present and valid in POST values, given his name.
