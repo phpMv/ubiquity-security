@@ -191,7 +191,7 @@ class Encryption {
 	 * @return string
 	 */
 	public static function generateKey(string $cipher): string {
-		return \random_bytes($cipher === self::AES128 ? 16 : 32);
+		return \bin2hex(\random_bytes($cipher === self::AES128 ? 16 : 32));
 	}
 
 	/**

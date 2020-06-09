@@ -21,8 +21,8 @@ class EncryptionManager {
 	 */
 	private static $encryptionInstance;
 
-	private static function getInstance(?string $key): Encryption {
-		return self::$encryptionInstance ??= new Encryption($key);
+	private static function getInstance(?string $key, ?string $cypher = Encryption::AES128): Encryption {
+		return self::$encryptionInstance ??= new Encryption($key, $cypher);
 	}
 
 	private static function getEncryptionKey() {
@@ -34,10 +34,11 @@ class EncryptionManager {
 	 * Do not use in production
 	 *
 	 * @param array $config
+	 * @param ?string $cypher
 	 */
-	public static function start(array &$config) {
+	public static function start(array &$config, ?string $cypher = Encryption::AES128) {
 		$oldKey = $config[self::ENCRYPTION_KEY_NAME] ?? null;
-		self::getInstance($oldKey);
+		self::getInstance($oldKey, $cypher);
 		$key = self::$encryptionInstance->getKey();
 
 		if ($oldKey !== $key) {
@@ -50,9 +51,10 @@ class EncryptionManager {
 	 * Start the encryption manager for production.
 	 *
 	 * @param array $config
+	 * @param ?string $cypher
 	 */
-	public static function startProd(array &$config) {
-		self::getInstance($config[self::ENCRYPTION_KEY_NAME] ?? null);
+	public static function startProd(array &$config, ?string $cypher = Encryption::AES128) {
+		self::getInstance($config[self::ENCRYPTION_KEY_NAME] ?? null, $cypher);
 	}
 
 	/**
