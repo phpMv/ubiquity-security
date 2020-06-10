@@ -3,6 +3,7 @@ namespace Ubiquity\security\data;
 
 use Ubiquity\exceptions\EncryptException;
 use Ubiquity\exceptions\DecryptException;
+use Ubiquity\exceptions\EncryptionKeyException;
 
 /**
  * Ubiquity\security\data$Encryption
@@ -18,7 +19,15 @@ class Encryption {
 
 	const AES128 = 'AES-128-CBC';
 
+	const AES192 = 'AES-192-CBC';
+
 	const AES256 = 'AES-256-CBC';
+
+	private static $acceptedCiphers = [
+		32 => self::AES128,
+		48 => self::AES192,
+		64 => self::AES256
+	];
 
 	/**
 	 * The encryption key.
@@ -43,9 +52,29 @@ class Encryption {
 	 *
 	 * @throws \RuntimeException
 	 */
-	public function __construct(?string $key = null, ?string $cipher = self::AES128) {
-		$this->key = (isset($key)) ? (string) $key : self::generateKey($cipher);
+	public function __construct(?string $key = null, ?string $cipher = null) {
+		$this->key = $key;
 		$this->cipher = $cipher;
+	}
+
+	public function initializeKeyAndCipher() {
+		if (isset($this->key) && ! isset($this->cipher)) {
+			$this->cipher = self::getCipherFromKey($this->key);
+		} elseif (! isset($this->key)) {
+			$this->cipher ??= self::AES128;
+			$this->key = self::generateKey($this->cipher);
+		}
+		if (! self::isValidKey($this->key, $this->cipher)) {
+			throw new EncryptionKeyException("The encryption key size is not valid for {$this->cipher}.");
+		}
+	}
+
+	public static function getCipherFromKey(string $key) {
+		$size = \strlen($key);
+		if (isset(self::$acceptedCiphers[$size])) {
+			return self::$acceptedCiphers[$size];
+		}
+		throw new EncryptionKeyException("The encryption key has not a valid size ({$size})");
 	}
 
 	/**
@@ -183,7 +212,7 @@ class Encryption {
 	 */
 	public static function isValidKey(string $key, string $cipher): bool {
 		$length = \strlen($key);
-		return ($cipher === self::AES128 && $length === 32) || ($cipher === self::AES256 && $length === 64);
+		return isset(self::$acceptedCiphers[$length]) && self::$acceptedCiphers[$length] === $cipher;
 	}
 
 	/**
@@ -193,7 +222,8 @@ class Encryption {
 	 * @return string
 	 */
 	public static function generateKey(string $cipher): string {
-		return \bin2hex(\random_bytes($cipher === self::AES128 ? 16 : 32));
+		$sizeMethods = \array_flip(self::$acceptedCiphers);
+		return \bin2hex(\random_bytes($sizeMethods[$cipher] / 2));
 	}
 
 	/**
@@ -210,6 +240,10 @@ class Encryption {
 	 */
 	public function getCipher() {
 		return $this->cipher;
+	}
+
+	public static function getMethods(?bool $aliases = null): array {
+		return \openssl_get_cipher_methods($aliases);
 	}
 }
 

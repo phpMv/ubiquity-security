@@ -30,15 +30,16 @@ class EncryptionManager {
 	}
 
 	/**
-	 * Start the manager and eventually generate the encryption key.
+	 * Start the manager and generate the encryption key.
 	 * Do not use in production
 	 *
 	 * @param array $config
-	 * @param ?string $cypher
+	 * @param ?string $cipher
 	 */
-	public static function start(array &$config, ?string $cypher = Encryption::AES128) {
+	public static function start(array &$config, ?string $cipher = Encryption::AES128) {
 		$oldKey = $config[self::ENCRYPTION_KEY_NAME] ?? null;
-		self::getInstance($oldKey, $cypher);
+		self::getInstance($oldKey, $cipher);
+		self::$encryptionInstance->initializeKeyAndCipher();
 		$key = self::$encryptionInstance->getKey();
 
 		if ($oldKey !== $key) {
@@ -53,8 +54,9 @@ class EncryptionManager {
 	 * @param array $config
 	 * @param ?string $cypher
 	 */
-	public static function startProd(array &$config, ?string $cypher = Encryption::AES128) {
-		self::getInstance($config[self::ENCRYPTION_KEY_NAME] ?? null, $cypher);
+	public static function startProd(array $config, ?string $cypher = null) {
+		$key = $config[self::ENCRYPTION_KEY_NAME];
+		self::getInstance($key, $cypher ?? Encryption::getCipherFromKey($key));
 	}
 
 	/**
