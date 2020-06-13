@@ -113,5 +113,21 @@ class CsrfManager {
 	public static function generateValue(?string $value = null): string {
 		return self::$validator->generate($value);
 	}
+
+	public static function getValidatorClass(): string {
+		return \get_class(self::$validator);
+	}
+
+	public static function getSelectorClass(): string {
+		return \get_class(self::$selector);
+	}
+
+	public static function getStorageClass(): string {
+		return \get_class(self::$storage);
+	}
+
+	public static function isStarted(): bool {
+		return isset(self::$storage);
+	}
 }
 

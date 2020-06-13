@@ -106,5 +106,13 @@ class EncryptionManager {
 	public static function getKey() {
 		return self::getInstance(self::getKey())->getKey();
 	}
+
+	public static function getEncryptionInstance(): ?Encryption {
+		return self::$encryptionInstance;
+	}
+
+	public static function isStarted(): bool {
+		return isset(self::$encryptionInstance);
+	}
 }
 
