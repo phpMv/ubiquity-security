@@ -1,0 +1,21 @@
+build:
+  nodes:
+    analysis:
+      dependencies:
+        before:
+          - composer require phpmv/ubiquity
+      environment:
+        php:
+          version: 7.4
+      tests:
+        override:
+          - php-scrutinizer-run
+
+filter:
+    paths: ["src/Ubiquity/*"]
+    excluded_paths:
+
+checks:
+    php:
+        code_rating: true
+        duplication: true
