@@ -7,8 +7,6 @@ class SessionTokenStorage implements TokenStorageInterface {
 
 	protected $key = '_CSRF';
 
-	private $datas;
-
 	protected function getKey($id) {
 		return $this->key . '/' . $id;
 	}
@@ -30,7 +28,9 @@ class SessionTokenStorage implements TokenStorageInterface {
 	}
 
 	public function remove(string $id): ?string {
-		return USession::delete($this->getKey($id));
+		$v = USession::get($id);
+		USession::delete($this->getKey($id));
+		return $v;
 	}
 }
 

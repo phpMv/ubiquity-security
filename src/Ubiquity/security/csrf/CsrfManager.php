@@ -36,9 +36,9 @@ class CsrfManager {
 	private static $storage;
 
 	public static function start(TokenStorageInterface $storage = null, GeneratorInterface $selector = null, GeneratorInterface $validator = null) {
-		self::$selector ??= new Md5Selector();
-		self::$validator ??= new RandomValidator();
-		self::$storage ??= new SessionTokenStorage();
+		self::$selector = $selector ?? new Md5Selector();
+		self::$validator = $validator ?? new RandomValidator();
+		self::$storage = $storage ?? new SessionTokenStorage();
 	}
 
 	/**

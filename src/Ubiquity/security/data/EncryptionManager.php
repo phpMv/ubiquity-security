@@ -25,10 +25,6 @@ class EncryptionManager {
 		return self::$encryptionInstance ??= new Encryption($key, $cypher);
 	}
 
-	private static function getEncryptionKey() {
-		return Startup::$config[self::ENCRYPTION_KEY_NAME] ?? null;
-	}
-
 	/**
 	 * Start the manager and generate the encryption key.
 	 * Do not use in production
@@ -100,7 +96,7 @@ class EncryptionManager {
 	 * @return string
 	 */
 	public static function generateKey(?string $cipher = Encryption::AES128): string {
-		return self::getInstance(null)->generateKey($cipher);
+		return self::getInstance(null)->generateKey($cipher ?? Encryption::AES128);
 	}
 
 	public static function getKey() {
