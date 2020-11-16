@@ -5,7 +5,7 @@ use Ubiquity\contents\validation\validators\multiples\LengthValidator;
 
 /**
  * Validates a password
- * Usage @validator("password","constraints"=>["min"=>v,"max"=>v,"upperCase"=>v,"numeric"=>v,"specialChar"=>v,"charser"=>v])
+ * Usage @validator("password","constraints"=>["min"=>v,"max"=>v,"upperCase"=>v,"numeric"=>v,"specialChar"=>v,"charset"=>v])
  * Ubiquity\security\auth\user$PasswordValidator
  * This class is part of Ubiquity
  *
