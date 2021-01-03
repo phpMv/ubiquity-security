@@ -2,6 +2,7 @@
 namespace Ubiquity\security\csrf;
 
 use Ubiquity\utils\http\UCookie;
+use Ubiquity\controllers\Startup;
 
 /**
  * Ubiquity\security\csrf$UCsrfHttp
@@ -44,6 +45,19 @@ class UCsrfHttp {
 			return CsrfManager::isValid($id, $value);
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns whether the given CSRF token is present and valid in header meta csrf-token, given his name.
+	 * @param string $name
+	 * @return bool
+	 */
+	public static function isValidMeta(string $name):bool{
+		$headers=Startup::getHttpInstance ()->getAllHeaders ();
+		if(isset($headers['csrf-token'])){
+			list($id,$value)=explode(':', $headers['csrf-token']);
+			return $id===CsrfManager::getSelector($name) && CsrfManager::isValidByName($name, $value);
+		}
 	}
 
 	/**
