@@ -1,5 +1,5 @@
 <?php
-namespace src\Ubiquity\security\csp;
+namespace Ubiquity\security\csp;
 
 /**
  * Ubiquity\security\csp$CspValues
