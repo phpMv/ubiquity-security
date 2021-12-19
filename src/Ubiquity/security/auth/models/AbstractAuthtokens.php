@@ -50,7 +50,7 @@ abstract class AbstractAuthtokens {
 
 	public function __construct() {
 		$this->selector = uniqid('', true);
-		$this->hashedValidator = bin2hex(random_bytes(20));
+		$this->hashedValidator = \bin2hex(\random_bytes(20));
 		$this->setDuration('+1 day');
 	}
 
@@ -104,7 +104,7 @@ abstract class AbstractAuthtokens {
 	}
 
 	public function checkValidator($validator) {
-		return hash_equals($this->hashedValidator, $validator);
+		return \hash_equals($this->hashedValidator, $validator);
 	}
 
 	/**
