@@ -25,7 +25,7 @@ class ContentSecurity {
 	public function addPolicy(string $directive, array ...$values): self {
 		$policies = $this->policies[$directive] ?? [];
 		foreach ($values as $v) {
-			if ($v === 'self' || $v === 'none') {
+			if (\in_array($v, CspValues::QUOTED)) {
 				$v = "'$v'";
 			}
 			$policies[$v] = true;
