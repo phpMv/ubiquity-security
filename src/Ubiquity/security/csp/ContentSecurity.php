@@ -34,13 +34,17 @@ class ContentSecurity {
 		return $this;
 	}
 
+	public function addPolicyDefault(string $directive, string ...$values): self {
+		$default = \array_keys($this->policies[CspDirectives::DEFAULT_SRC] ?? []);
+		$values = \array_merge($default, $values);
+		$this->addPolicy($directive, ...$values);
+		return $this;
+	}
+
 	public function addNonce(string $nonce, string ...$directives): self {
-		$directives ??= [
-			CspDirectives::DEFAULT_SRC
-		];
 		foreach ($directives as $directive) {
 			$this->policies[$directive]["'nonce-$nonce'"] = true;
-			$this->policies[$directive][CspValues::STRICT_DYNAMIC] = true;
+			$this->policies[$directive]["'" . CspValues::STRICT_DYNAMIC . "'"] = true;
 		}
 		return $this;
 	}
@@ -75,12 +79,18 @@ class ContentSecurity {
 		return $csp->addNonce($nonce, ...$directives);
 	}
 
+	public static function all(): ContentSecurity {
+		$csp = new self();
+		return $csp->addPolicy(CspDirectives::DEFAULT_SRC, CspValues::SELF);
+	}
+
 	public static function defaultUbiquity(): ContentSecurity {
 		$csp = new self();
-		$csp->addPolicy(CspDirectives::DEFAULT_SRC, 'cdn.jsdelivr.net', 'cdnjs.cloudflare.com');
-		$csp->addPolicy(CspDirectives::FONT_SRC, 'fonts.googleapis.com', 'fonts.gstatic.com', 'data:');
-		$csp->addPolicy(CspDirectives::STYLE_SRC_ELM, CspValues::UNSAFE_INLINE);
+		$csp->addPolicy(CspDirectives::DEFAULT_SRC, 'self', 'cdn.jsdelivr.net', 'cdnjs.cloudflare.com');
+		$csp->addPolicyDefault(CspDirectives::FONT_SRC, 'fonts.googleapis.com', 'fonts.gstatic.com', 'data:');
+		$csp->addPolicyDefault(CspDirectives::STYLE_SRC, CspValues::UNSAFE_INLINE, 'fonts.googleapis.com');
+		$csp->addPolicyDefault(CspDirectives::SCRIPT_SRC_ELM, CspValues::UNSAFE_INLINE);
+		$csp->addPolicy(CspDirectives::IMG_SRC, 'data:');
 		return $csp;
 	}
 }
-
