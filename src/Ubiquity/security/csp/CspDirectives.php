@@ -7,11 +7,11 @@ class CspDirectives {
 
 	const SCRIPT_SRC = 'script-src';
 
-	const SCRIPT_SRC_ELM = 'script-src-elm';
+	const SCRIPT_SRC_ELM = 'script-src-elem';
 
 	const STYLE_SRC = 'style-src';
 
-	const STYLE_SRC_ELM = 'style-src-elm';
+	const STYLE_SRC_ELM = 'style-src-elem';
 
 	const STYLE_SRC_ATTR = 'style-src-attr';
 
