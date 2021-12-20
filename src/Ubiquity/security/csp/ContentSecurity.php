@@ -67,7 +67,7 @@ class ContentSecurity {
 		if (isset($reportOnly)) {
 			$this->reportOnly($reportOnly);
 		}
-		UResponse::header($this->header, $this->generate());
+		UResponse::header($this->header, $this->generate(), false);
 	}
 
 	public static function nonce($nonce, string ...$directives): ContentSecurity {
@@ -79,7 +79,7 @@ class ContentSecurity {
 		$csp = new self();
 		$csp->addPolicy(CspDirectives::DEFAULT_SRC, 'cdn.jsdelivr.net', 'cdnjs.cloudflare.com');
 		$csp->addPolicy(CspDirectives::FONT_SRC, 'fonts.googleapis.com', 'fonts.gstatic.com', 'data:');
-		$csp->addPolicy(CspDirectives::STYLE_SRC, CspValues::UNSAFE_INLINE);
+		$csp->addPolicy(CspDirectives::STYLE_SRC_ELM, CspValues::UNSAFE_INLINE);
 		return $csp;
 	}
 }
