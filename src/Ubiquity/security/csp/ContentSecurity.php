@@ -40,6 +40,7 @@ class ContentSecurity {
 		];
 		foreach ($directives as $directive) {
 			$this->policies[$directive]["'nonce-$nonce'"] = true;
+			$this->policies[$directive][CspValues::STRICT_DYNAMIC] = true;
 		}
 		return $this;
 	}
@@ -62,14 +63,24 @@ class ContentSecurity {
 		return $this;
 	}
 
-	public function addHeaderToResponse(): void {
+	public function addHeaderToResponse(?bool $reportOnly = null): void {
+		if (isset($reportOnly)) {
+			$this->reportOnly($reportOnly);
+		}
 		UResponse::header($this->header, $this->generate());
 	}
 
-	public static function nonce($nonce, string ...$directives): void {
+	public static function nonce($nonce, string ...$directives): ContentSecurity {
 		$csp = new self();
-		$csp->addNonce($nonce, ...$directives);
-		$csp->addHeaderToResponse();
+		return $csp->addNonce($nonce, ...$directives);
+	}
+
+	public static function defaultUbiquity(): ContentSecurity {
+		$csp = new self();
+		$csp->addPolicy(CspDirectives::DEFAULT_SRC, 'cdn.jsdelivr.net', 'cdnjs.cloudflare.com');
+		$csp->addPolicy(CspDirectives::FONT_SRC, 'fonts.googleapis.com', 'fonts.gstatic.com', 'data:');
+		$csp->addPolicy(CspDirectives::STYLE_SRC, CspValues::UNSAFE_INLINE);
+		return $csp;
 	}
 }
 
