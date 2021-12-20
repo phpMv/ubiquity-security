@@ -34,6 +34,16 @@ class ContentSecurity {
 		return $this;
 	}
 
+	public function addNonce(string $nonce, string ...$directives): self {
+		$directives ??= [
+			CspDirectives::DEFAULT_SRC
+		];
+		foreach ($directives as $directive) {
+			$this->policies[$directive]["'nonce-$nonce'"] = true;
+		}
+		return $this;
+	}
+
 	public function setDefaultSrc(string ...$policies) {
 		return $this->addPolicy(CspDirectives::DEFAULT_SRC, ...$policies);
 	}
@@ -54,6 +64,12 @@ class ContentSecurity {
 
 	public function addHeaderToResponse(): void {
 		UResponse::header($this->header, $this->generate());
+	}
+
+	public static function nonce($nonce, string ...$directives): void {
+		$csp = new self();
+		$csp->addNonce($nonce, ...$directives);
+		$csp->addHeaderToResponse();
 	}
 }
 
