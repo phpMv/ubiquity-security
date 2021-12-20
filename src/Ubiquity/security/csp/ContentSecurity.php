@@ -43,8 +43,14 @@ class ContentSecurity {
 
 	public function addNonce(string $nonce, string ...$directives): self {
 		foreach ($directives as $directive) {
-			$this->policies[$directive]["'nonce-$nonce'"] = true;
-			$this->policies[$directive]["'" . CspValues::STRICT_DYNAMIC . "'"] = true;
+			$this->addPolicy($directive, "'nonce-$nonce'", CspValues::STRICT_DYNAMIC);
+		}
+		return $this;
+	}
+
+	public function addNonceDefault(string $nonce, string ...$directives): self {
+		foreach ($directives as $directive) {
+			$this->addPolicyDefault($directive, "'nonce-$nonce'", CspValues::STRICT_DYNAMIC);
 		}
 		return $this;
 	}
