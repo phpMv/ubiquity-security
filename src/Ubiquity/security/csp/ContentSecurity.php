@@ -22,7 +22,7 @@ class ContentSecurity {
 
 	private $header = self::HEADER;
 
-	public function addPolicy(string $directive, array ...$values): self {
+	public function addPolicy(string $directive, string ...$values): self {
 		$policies = $this->policies[$directive] ?? [];
 		foreach ($values as $v) {
 			if (\in_array($v, CspValues::QUOTED)) {
@@ -34,7 +34,7 @@ class ContentSecurity {
 		return $this;
 	}
 
-	public function setDefaultSrc(array ...$policies) {
+	public function setDefaultSrc(string ...$policies) {
 		return $this->addPolicy(CspDirectives::DEFAULT_SRC, ...$policies);
 	}
 
@@ -53,7 +53,7 @@ class ContentSecurity {
 	}
 
 	public function addHeaderToResponse(): void {
-		UResponse::header(self::HEADER, $this->generate());
+		UResponse::header($this->header, $this->generate());
 	}
 }
 
