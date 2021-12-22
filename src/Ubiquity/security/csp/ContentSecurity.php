@@ -22,6 +22,12 @@ class ContentSecurity {
 
 	private $header = self::HEADER;
 
+	public function __construct(?bool $reportOnly = null) {
+		if (isset($reportOnly)) {
+			$this->reportOnly($reportOnly);
+		}
+	}
+
 	public function addPolicy(string $directive, string ...$values): self {
 		$policies = $this->policies[$directive] ?? [];
 		foreach ($values as $v) {
