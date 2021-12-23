@@ -74,8 +74,10 @@ class ContentSecurity {
 		return $strs;
 	}
 
-	public function reportOnly(bool $reportOnly = true): self {
-		$this->header = $reportOnly ? self::DEBUG_HEADER : self::HEADER;
+	public function reportOnly(?bool $reportOnly = true): self {
+		if (isset($reportOnly)) {
+			$this->header = $reportOnly ? self::DEBUG_HEADER : self::HEADER;
+		}
 		return $this;
 	}
 
