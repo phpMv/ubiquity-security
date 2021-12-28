@@ -26,5 +26,9 @@ class NonceGenerator {
 	public function getNonce(string $name,int $size=32) {
 		return $this->nonces[$name] ??= self::_generateNonce($name, $size);
 	}
+	
+	public function __toString(){
+		return \count($this->nonces);
+	}
 }
 
