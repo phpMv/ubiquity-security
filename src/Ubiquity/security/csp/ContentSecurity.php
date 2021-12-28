@@ -98,6 +98,13 @@ class ContentSecurity {
 		return $csp->addPolicy(CspDirectives::DEFAULT_SRC, CspValues::SELF);
 	}
 
+	/**
+	 * @return array
+	 */
+	public function getPolicies(): array {
+		return $this->policies;
+	}
+
 	public static function defaultUbiquity(): ContentSecurity {
 		$csp = new self();
 		$csp->addPolicy(CspDirectives::DEFAULT_SRC, 'self', 'cdn.jsdelivr.net', 'cdnjs.cloudflare.com');
@@ -107,4 +114,12 @@ class ContentSecurity {
 		$csp->addPolicy(CspDirectives::IMG_SRC, 'data:');
 		return $csp;
 	}
+
+	/**
+	 * @param array $policies
+	 */
+	public function setPolicies(array $policies): void {
+		$this->policies = $policies;
+	}
+
 }

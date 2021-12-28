@@ -50,5 +50,28 @@ class ContentSecurityManager {
 			$csp->addHeaderToResponse($reportOnly);
 		}
 	}
+
+	/**
+	 * @return NonceGenerator
+	 */
+	public static function getNonceGenerator(): NonceGenerator {
+		return self::$nonceGenerator;
+	}
+
+	/**
+	 * @return array
+	 */
+	public static function getCsp(): array {
+		return self::$csp;
+	}
+	
+
+	/**
+	 * @return bool
+	 */
+	public static function isReportOnly(): bool {
+		return self::$reportOnly;
+	}
+	
 }
 
