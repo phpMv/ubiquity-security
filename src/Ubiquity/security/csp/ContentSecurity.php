@@ -22,12 +22,24 @@ class ContentSecurity {
 
 	private $header = self::HEADER;
 
+	/**
+	 * ContentSecurity constructor.
+	 *
+	 * @param bool|null $reportOnly
+	 */
 	public function __construct(?bool $reportOnly = null) {
 		if (isset($reportOnly)) {
 			$this->reportOnly($reportOnly);
 		}
 	}
 
+	/**
+	 * Adds new values to a directive.
+	 *
+	 * @param string $directive
+	 * @param string ...$values
+	 * @return $this
+	 */
 	public function addPolicy(string $directive, string ...$values): self {
 		$policies = $this->policies[$directive] ?? [];
 		foreach ($values as $v) {
@@ -40,6 +52,13 @@ class ContentSecurity {
 		return $this;
 	}
 
+	/**
+	 * Adds new values to a directive, re-using default-src actual values.
+	 *
+	 * @param string $directive
+	 * @param string ...$values
+	 * @return $this
+	 */
 	public function addPolicyDefault(string $directive, string ...$values): self {
 		$default = \array_keys($this->policies[CspDirectives::DEFAULT_SRC] ?? []);
 		$values = \array_merge($default, $values);
@@ -47,6 +66,13 @@ class ContentSecurity {
 		return $this;
 	}
 
+	/**
+	 * Adds a nonce to the directives.
+	 *
+	 * @param string $nonce
+	 * @param string ...$directives
+	 * @return $this
+	 */
 	public function addNonce(string $nonce, string ...$directives): self {
 		foreach ($directives as $directive) {
 			$this->addPolicy($directive, "'nonce-$nonce'", CspValues::STRICT_DYNAMIC);
@@ -54,6 +80,13 @@ class ContentSecurity {
 		return $this;
 	}
 
+	/**
+	 * Adds a nonce to a directive, re-using default-src actual values.
+	 *
+	 * @param string $nonce
+	 * @param string ...$directives
+	 * @return $this
+	 */
 	public function addNonceDefault(string $nonce, string ...$directives): self {
 		foreach ($directives as $directive) {
 			$this->addPolicyDefault($directive, "'nonce-$nonce'", CspValues::STRICT_DYNAMIC);
@@ -61,10 +94,21 @@ class ContentSecurity {
 		return $this;
 	}
 
-	public function setDefaultSrc(string ...$policies) {
+	/**
+	 * Defines the policies for default-src directive.
+	 *
+	 * @param string ...$policies
+	 * @return $this
+	 */
+	public function setDefaultSrc(string ...$policies): self {
 		return $this->addPolicy(CspDirectives::DEFAULT_SRC, ...$policies);
 	}
 
+	/**
+	 * Generates the header string.
+	 *
+	 * @return string
+	 */
 	public function generate(): string {
 		$strs = '';
 		foreach ($this->policies as $directive => $policy) {
@@ -74,6 +118,28 @@ class ContentSecurity {
 		return $strs;
 	}
 
+	/**
+	 * Display a ContentSecurity object.
+	 *
+	 * @param callable $directiveCall
+	 * @param callable $policyCall
+	 * @return string
+	 */
+	public function display(callable $directiveCall, callable $policyCall): string {
+		$strs = '';
+		foreach ($this->policies as $directive => $policy) {
+			$policies = \array_keys($policy);
+			$strs .= $directiveCall($directive) . $policyCall(\implode(' ', $policies));
+		}
+		return $strs;
+	}
+
+	/**
+	 * Sets reportOnly.
+	 *
+	 * @param bool|null $reportOnly
+	 * @return $this
+	 */
 	public function reportOnly(?bool $reportOnly = true): self {
 		if (isset($reportOnly)) {
 			$this->header = $reportOnly ? self::DEBUG_HEADER : self::HEADER;
@@ -81,6 +147,11 @@ class ContentSecurity {
 		return $this;
 	}
 
+	/**
+	 * Adds headers to the response.
+	 *
+	 * @param bool|null $reportOnly
+	 */
 	public function addHeaderToResponse(?bool $reportOnly = null): void {
 		if (isset($reportOnly)) {
 			$this->reportOnly($reportOnly);
@@ -88,23 +159,43 @@ class ContentSecurity {
 		UResponse::header($this->header, $this->generate(), false);
 	}
 
+	/**
+	 * Creates a nonce and add it to some directives.
+	 *
+	 * @param
+	 *        	$nonce
+	 * @param string ...$directives
+	 * @return ContentSecurity
+	 */
 	public static function nonce($nonce, string ...$directives): ContentSecurity {
 		$csp = new self();
 		return $csp->addNonce($nonce, ...$directives);
 	}
 
+	/**
+	 * Creates a new ContentSecurity object, with self in default-src.
+	 *
+	 * @return ContentSecurity
+	 */
 	public static function all(): ContentSecurity {
 		$csp = new self();
 		return $csp->addPolicy(CspDirectives::DEFAULT_SRC, CspValues::SELF);
 	}
 
 	/**
+	 * Returns the actual policies.
+	 *
 	 * @return array
 	 */
 	public function getPolicies(): array {
 		return $this->policies;
 	}
 
+	/**
+	 * Creates a new ContentSecurity object for Ubiquity Webtools.
+	 *
+	 * @return ContentSecurity
+	 */
 	public static function defaultUbiquity(): ContentSecurity {
 		$csp = new self();
 		$csp->addPolicy(CspDirectives::DEFAULT_SRC, 'self', 'cdn.jsdelivr.net', 'cdnjs.cloudflare.com');
@@ -114,12 +205,4 @@ class ContentSecurity {
 		$csp->addPolicy(CspDirectives::IMG_SRC, 'data:');
 		return $csp;
 	}
-
-	/**
-	 * @param array $policies
-	 */
-	public function setPolicies(array $policies): void {
-		$this->policies = $policies;
-	}
-
 }

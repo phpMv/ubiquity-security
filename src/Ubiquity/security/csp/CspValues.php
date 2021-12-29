@@ -35,4 +35,3 @@ class CspValues {
 		self::UNSAFE_HASHES
 	];
 }
-

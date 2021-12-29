@@ -22,7 +22,12 @@ class ShieldonManager {
 		return self::$firewall;
 	}
 
-	public static function start(string $writable = null) {
+	/**
+	 * Starts th Shieldon service.
+	 *
+	 * @param string $writable
+	 */
+	public static function start(string $writable = null): void {
 		$writable ??= \ROOT . \DS . 'cache' . \DS . 'shieldon';
 		self::$firewall = new Firewall();
 		self::$firewall->configure($writable);
@@ -33,12 +38,19 @@ class ShieldonManager {
 		}
 	}
 
+	/**
+	 * Creates the admin panel.
+	 */
 	public static function createPanel(string $uri): Panel {
 		$panel = new Panel();
 		self::$firewall->controlPanel($uri);
 		return $panel;
 	}
 
+	/**
+	 *
+	 * @return ResponseInterface
+	 */
 	public static function run(): ResponseInterface {
 		return self::$firewall->run();
 	}

@@ -17,18 +17,24 @@ class NonceGenerator {
 		$bytes = \random_bytes((int) ($value ?? 32));
 		$nonce = \base64_encode($bytes);
 		if (isset($this->onNonce) && ! URequest::isAjax()) {
-			$onNonce=$this->onNonce;
+			$onNonce = $this->onNonce;
 			$onNonce($name, $nonce);
 		}
 		return $nonce;
 	}
 
-	public function getNonce(string $name,int $size=32) {
+	/**
+	 * Returns a new or an existing nonce value.
+	 *
+	 * @param string $name
+	 * @param int $size
+	 * @return string
+	 */
+	public function getNonce(string $name, int $size = 32): string {
 		return $this->nonces[$name] ??= self::_generateNonce($name, $size);
 	}
-	
-	public function __toString(){
+
+	public function __toString() {
 		return \count($this->nonces);
 	}
 }
-

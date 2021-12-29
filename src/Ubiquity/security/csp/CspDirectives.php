@@ -1,6 +1,15 @@
 <?php
 namespace Ubiquity\security\csp;
 
+/**
+ * Ubiquity\security\cspCspDirectives
+ * This class is part of Ubiquity
+ *
+ * @author jc
+ * @version 1.0.0
+ *
+ *
+ */
 class CspDirectives {
 
 	const DEFAULT_SRC = 'default-src';
@@ -51,4 +60,3 @@ class CspDirectives {
 
 	const NAVIGATE_TO = 'navigate-to';
 }
-

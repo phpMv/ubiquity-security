@@ -18,32 +18,72 @@ class ContentSecurityManager {
 
 	private static bool $reportOnly;
 
-	public static function start(string $nonceGeneratorClass = null, bool $reportOnly = false, ?callable $onNonce = null) {
+	/**
+	 * Starts the Content Security Policies manager.
+	 *
+	 * @param string|null $nonceGeneratorClass
+	 *        	The class used for generating nonces.
+	 * @param bool $reportOnly
+	 * @param callable|null $onNonce
+	 */
+	public static function start(string $nonceGeneratorClass = null, bool $reportOnly = false, ?callable $onNonce = null): void {
 		$nonceGeneratorClass ??= NonceGenerator::class;
 		self::$nonceGenerator = new $nonceGeneratorClass($onNonce);
 		self::$reportOnly = $reportOnly;
 	}
 
-	public static function getNonce(string $name) {
+	/**
+	 * Returns a new or an existing nonce.
+	 *
+	 * @param string $name
+	 *        	The nonce to create
+	 * @return string
+	 */
+	public static function getNonce(string $name): string {
 		return self::$nonceGenerator->getNonce($name);
 	}
 
+	/**
+	 * Checks if the manager is started.
+	 *
+	 * @return bool
+	 */
 	public static function isStarted(): bool {
 		return isset(self::$nonceGenerator);
 	}
 
+	/**
+	 * Creates and returns a new ContentSecurity object.
+	 *
+	 * @param bool|null $reportOnly
+	 * @return ContentSecurity
+	 */
 	public static function addCsp(?bool $reportOnly = null): ContentSecurity {
 		return self::$csp[] = new ContentSecurity($reportOnly ?? self::$reportOnly);
 	}
 
-	public static function clearCsp() {
+	/**
+	 * Removes all CSP objects.
+	 */
+	public static function clearCsp(): void {
 		self::$csp = [];
 	}
 
+	/**
+	 * Creates a new ContentSecurity object for Ubiquity Webtools.
+	 *
+	 * @param bool|null $reportOnly
+	 * @return ContentSecurity
+	 */
 	public static function defaultUbiquity(?bool $reportOnly = null): ContentSecurity {
 		return self::$csp[] = ContentSecurity::defaultUbiquity()->reportOnly($reportOnly);
 	}
 
+	/**
+	 * Adds all Content security policies to headers.
+	 *
+	 * @param bool|null $reportOnly
+	 */
 	public static function addHeadersToResponse(?bool $reportOnly = null): void {
 		$reportOnly ??= self::$reportOnly;
 		foreach (self::$csp as $csp) {
@@ -52,6 +92,8 @@ class ContentSecurityManager {
 	}
 
 	/**
+	 * Returns the NonceGenerator instance.
+	 *
 	 * @return NonceGenerator
 	 */
 	public static function getNonceGenerator(): NonceGenerator {
@@ -59,19 +101,19 @@ class ContentSecurityManager {
 	}
 
 	/**
+	 *
 	 * @return array
 	 */
 	public static function getCsp(): array {
 		return self::$csp;
 	}
-	
 
 	/**
+	 * Returns true if reportOnly header is activated.
+	 *
 	 * @return bool
 	 */
 	public static function isReportOnly(): bool {
 		return self::$reportOnly;
 	}
-	
 }
-
