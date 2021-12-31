@@ -53,6 +53,19 @@ class ContentSecurity {
 		return $this;
 	}
 
+	public function removePolicy(string $directive, string ...$values): self {
+		$policies = $this->policies[$directive] ?? [];
+		foreach ($values as $v) {
+			if (\in_array($v, CspValues::QUOTED)) {
+				$v = "'$v'";
+			}
+			if (isset($this->policies[$directive][$v])) {
+				unset($this->policies[$directive][$v]);
+			}
+		}
+		return $this;
+	}
+
 	/**
 	 * Adds new values to a directive, re-using default-src actual values.
 	 *
@@ -82,6 +95,20 @@ class ContentSecurity {
 	}
 
 	/**
+	 * Adds a hash to the directives.
+	 *
+	 * @param string $hash
+	 * @param string ...$directives
+	 * @return $this
+	 */
+	public function addHash(string $hash, string ...$directives): self {
+		foreach ($directives as $directive) {
+			$this->addPolicy($directive, "'$hash'");
+		}
+		return $this;
+	}
+
+	/**
 	 * Adds a nonce to a directive, re-using default-src actual values.
 	 *
 	 * @param string $nonce
@@ -91,6 +118,20 @@ class ContentSecurity {
 	public function addNonceDefault(string $nonce, string ...$directives): self {
 		foreach ($directives as $directive) {
 			$this->addPolicyDefault($directive, "'nonce-$nonce'", CspValues::STRICT_DYNAMIC);
+		}
+		return $this;
+	}
+
+	/**
+	 * Adds a hash to a directive, re-using default-src actual values.
+	 *
+	 * @param string $hash
+	 * @param string ...$directives
+	 * @return $this
+	 */
+	public function addHashDefault(string $hash, string ...$directives): self {
+		foreach ($directives as $directive) {
+			$this->addPolicyDefault($directive, "'$hash'");
 		}
 		return $this;
 	}
@@ -202,23 +243,24 @@ class ContentSecurity {
 		$csp->addPolicy(CspDirectives::DEFAULT_SRC, 'self', 'cdn.jsdelivr.net', 'cdnjs.cloudflare.com');
 		$csp->addPolicyDefault(CspDirectives::FONT_SRC, 'fonts.googleapis.com', 'fonts.gstatic.com', 'data:');
 		$csp->addPolicyDefault(CspDirectives::STYLE_SRC, CspValues::UNSAFE_INLINE, 'fonts.googleapis.com');
-		$csp->addPolicyDefault(CspDirectives::SCRIPT_SRC_ELM, CspValues::UNSAFE_INLINE);
+		$csp->addPolicyDefault(CspDirectives::SCRIPT_SRC_ELM);
 		$csp->addPolicy(CspDirectives::IMG_SRC, 'data:');
 		return $csp;
 	}
 
 	/**
 	 * Creates a new ContentSecurity object for Ubiquity Webtools in debug mode.
-	 * 
+	 *
 	 * @param string $livereloadServer
 	 * @return ContentSecurity
 	 */
-	public static function defaultUbiquityDebug(string $livereloadServer='127.0.0.1:35729'): ContentSecurity {
+	public static function defaultUbiquityDebug(string $livereloadServer = '127.0.0.1:35729'): ContentSecurity {
 		$csp = self::defaultUbiquity();
-		$config=Startup::$config;
-		if($config['debug'] && \Ubiquity\debug\LiveReload::hasLiveReload()){
-			$csp->addPolicyDefault(CspDirectives::CONNECT_SRC,"ws://$livereloadServer");
-			$csp->addPolicy(CspDirectives::SCRIPT_SRC_ELM,"http://$livereloadServer");
+		$config = Startup::$config;
+		if ($config['debug'] && \Ubiquity\debug\LiveReload::hasLiveReload()) {
+			$csp->addHash('sha256-8Xnt4HKk9Yhr0dEXwbeeEDZpkRMxqi9xGg43hnmUurY=', CspDirectives::SCRIPT_SRC_ELM);
+			$csp->addPolicyDefault(CspDirectives::CONNECT_SRC, "ws://$livereloadServer");
+			$csp->addPolicy(CspDirectives::SCRIPT_SRC_ELM, "http://$livereloadServer");
 		}
 		return $csp;
 	}
