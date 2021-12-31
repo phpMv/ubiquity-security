@@ -80,6 +80,17 @@ class ContentSecurityManager {
 	}
 
 	/**
+	 * Creates a new ContentSecurity object for Ubiquity Webtools in debug mode.
+	 *
+	 * @param bool|null $reportOnly
+	 * @param string $livereloadServer
+	 * @return ContentSecurity
+	 */
+	public static function defaultUbiquityDebug(?bool $reportOnly = null,string $livereloadServer='127.0.0.1:35729'): ContentSecurity {
+		return self::$csp[] = ContentSecurity::defaultUbiquityDebug($livereloadServer)->reportOnly($reportOnly);
+	}
+
+	/**
 	 * Adds all Content security policies to headers.
 	 *
 	 * @param bool|null $reportOnly

@@ -1,6 +1,7 @@
 <?php
 namespace Ubiquity\security\csp;
 
+use Ubiquity\controllers\Startup;
 use Ubiquity\utils\http\UResponse;
 
 /**
@@ -203,6 +204,22 @@ class ContentSecurity {
 		$csp->addPolicyDefault(CspDirectives::STYLE_SRC, CspValues::UNSAFE_INLINE, 'fonts.googleapis.com');
 		$csp->addPolicyDefault(CspDirectives::SCRIPT_SRC_ELM, CspValues::UNSAFE_INLINE);
 		$csp->addPolicy(CspDirectives::IMG_SRC, 'data:');
+		return $csp;
+	}
+
+	/**
+	 * Creates a new ContentSecurity object for Ubiquity Webtools in debug mode.
+	 * 
+	 * @param string $livereloadServer
+	 * @return ContentSecurity
+	 */
+	public static function defaultUbiquityDebug(string $livereloadServer='127.0.0.1:35729'): ContentSecurity {
+		$csp = self::defaultUbiquity();
+		$config=Startup::$config;
+		if($config['debug'] && \Ubiquity\debug\LiveReload::hasLiveReload()){
+			$csp->addPolicyDefault(CspDirectives::CONNECT_SRC,"ws://$livereloadServer");
+			$csp->addPolicy(CspDirectives::SCRIPT_SRC_ELM,"http://$livereloadServer");
+		}
 		return $csp;
 	}
 }
