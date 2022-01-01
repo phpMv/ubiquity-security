@@ -240,10 +240,7 @@ class ContentSecurity {
 	 */
 	public static function defaultUbiquity(): ContentSecurity {
 		$csp = new self();
-		$csp->addPolicy(CspDirectives::DEFAULT_SRC, 'self', 'cdn.jsdelivr.net', 'cdnjs.cloudflare.com');
-		$csp->addPolicyDefault(CspDirectives::FONT_SRC, 'fonts.googleapis.com', 'fonts.gstatic.com', 'data:');
-		$csp->addPolicyDefault(CspDirectives::STYLE_SRC, CspValues::UNSAFE_INLINE, 'fonts.googleapis.com');
-		$csp->addPolicyDefault(CspDirectives::SCRIPT_SRC_ELM);
+		$csp->addPolicyDefault(CspDirectives::CONNECT_SRC, CspValues::SELF);
 		$csp->addPolicy(CspDirectives::IMG_SRC, 'data:');
 		return $csp;
 	}
@@ -258,9 +255,7 @@ class ContentSecurity {
 		$csp = self::defaultUbiquity();
 		$config = Startup::$config;
 		if ($config['debug'] && \Ubiquity\debug\LiveReload::hasLiveReload()) {
-			$csp->addHash('sha256-8Xnt4HKk9Yhr0dEXwbeeEDZpkRMxqi9xGg43hnmUurY=', CspDirectives::SCRIPT_SRC_ELM);
 			$csp->addPolicyDefault(CspDirectives::CONNECT_SRC, "ws://$livereloadServer");
-			$csp->addPolicy(CspDirectives::SCRIPT_SRC_ELM, "http://$livereloadServer");
 		}
 		return $csp;
 	}

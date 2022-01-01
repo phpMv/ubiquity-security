@@ -44,6 +44,18 @@ class ContentSecurityManager {
 	}
 
 	/**
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	public static function hasNonce(string $name): bool {
+		if (isset(self::$nonceGenerator)) {
+			return self::$nonceGenerator->hasNonce($name);
+		}
+		return false;
+	}
+
+	/**
 	 * Checks if the manager is started.
 	 *
 	 * @return bool
@@ -86,7 +98,7 @@ class ContentSecurityManager {
 	 * @param string $livereloadServer
 	 * @return ContentSecurity
 	 */
-	public static function defaultUbiquityDebug(?bool $reportOnly = null,string $livereloadServer='127.0.0.1:35729'): ContentSecurity {
+	public static function defaultUbiquityDebug(?bool $reportOnly = null, string $livereloadServer = '127.0.0.1:35729'): ContentSecurity {
 		return self::$csp[] = ContentSecurity::defaultUbiquityDebug($livereloadServer)->reportOnly($reportOnly);
 	}
 

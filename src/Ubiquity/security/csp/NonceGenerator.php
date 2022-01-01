@@ -34,6 +34,19 @@ class NonceGenerator {
 		return $this->nonces[$name] ??= self::_generateNonce($name, $size);
 	}
 
+	/**
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	public function hasNonce(string $name): bool {
+		return isset($this->nonces[$name]);
+	}
+
+	/**
+	 *
+	 * @return string
+	 */
 	public function __toString() {
 		return \count($this->nonces);
 	}
