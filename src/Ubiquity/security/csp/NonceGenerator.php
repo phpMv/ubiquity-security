@@ -18,7 +18,7 @@ class NonceGenerator {
 		$nonce = \base64_encode($bytes);
 		if (isset($this->onNonce) && ! URequest::isAjax()) {
 			$onNonce = $this->onNonce;
-			$onNonce($name, $nonce);
+			$onNonce($name, $nonce, 'nonce');
 		}
 		return $nonce;
 	}

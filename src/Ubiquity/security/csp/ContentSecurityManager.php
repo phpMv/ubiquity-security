@@ -1,6 +1,8 @@
 <?php
 namespace Ubiquity\security\csp;
 
+use Ubiquity\utils\http\URequest;
+
 /**
  * Manage Content Security Policies.
  * Ubiquity\security\csp$ContentSecurityManager
@@ -18,17 +20,22 @@ class ContentSecurityManager {
 
 	private static bool $reportOnly;
 
+	private static string $hashAlgo = 'sha256';
+
+	private static ?callable $onGenerate;
+
 	/**
 	 * Starts the Content Security Policies manager.
 	 *
 	 * @param string|null $nonceGeneratorClass
 	 *        	The class used for generating nonces.
 	 * @param bool $reportOnly
-	 * @param callable|null $onNonce
+	 * @param callable|null $onGenerate
 	 */
-	public static function start(string $nonceGeneratorClass = null, bool $reportOnly = false, ?callable $onNonce = null): void {
+	public static function start(string $nonceGeneratorClass = null, bool $reportOnly = false, ?callable $onGenerate = null): void {
 		$nonceGeneratorClass ??= NonceGenerator::class;
-		self::$nonceGenerator = new $nonceGeneratorClass($onNonce);
+		self::$onGenerate = $onGenerate;
+		self::$nonceGenerator = new $nonceGeneratorClass($onGenerate);
 		self::$reportOnly = $reportOnly;
 	}
 
@@ -41,6 +48,25 @@ class ContentSecurityManager {
 	 */
 	public static function getNonce(string $name): string {
 		return self::$nonceGenerator->getNonce($name);
+	}
+
+	/**
+	 * Generates a hash and add it to a directive.
+	 *
+	 * @param string $name
+	 * @param string $code
+	 * @param string $algo
+	 *        	default sha256, possible value sha384,sha512
+	 * @return string
+	 */
+	public static function getHash(string $name, string $code, string $algo = 'sha256'): string {
+		$code = \preg_replace('/\r\n/', '\n', $code);
+		$hash = \base64_encode(\hash($algo, $code, true));
+		if (isset(self::$onGenerate) && ! URequest::isAjax()) {
+			$onG = self::$onGenerate;
+			$onG($name, $hash, $algo);
+		}
+		return $hash;
 	}
 
 	/**
@@ -138,5 +164,29 @@ class ContentSecurityManager {
 	 */
 	public static function isReportOnly(): bool {
 		return self::$reportOnly;
+	}
+
+	/**
+	 *
+	 * @return string
+	 */
+	public static function getHashAlgo(): string {
+		return ContentSecurityManager::$hashAlgo;
+	}
+
+	/**
+	 *
+	 * @param string $hashAlgo
+	 */
+	public static function setHashAlgo(string $hashAlgo) {
+		ContentSecurityManager::$hashAlgo = $hashAlgo;
+	}
+
+	/**
+	 *
+	 * @param callable $onGenerate
+	 */
+	public static function setOnGenerate(callable $onGenerate) {
+		ContentSecurityManager::$onGenerate = $onGenerate;
 	}
 }

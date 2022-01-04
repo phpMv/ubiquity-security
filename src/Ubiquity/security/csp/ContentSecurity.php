@@ -109,22 +109,6 @@ class ContentSecurity {
 	}
 
 	/**
-	 * Generates a hash and add it to a directive.
-	 *
-	 * @param string $code
-	 * @param string $directive
-	 *        	default script-src
-	 * @param string $algo
-	 *        	default sha256, possible value sha384,sha512
-	 * @return $this
-	 */
-	public function generateHash(string $code, string $directive = CspDirectives::SCRIPT_SRC, string $algo = 'sha256'): self {
-		$code = \preg_replace('/\r\n/', '\n', $code);
-		$hash = \base64_encode(\hash($algo, $code, true));
-		return $this->addHash("$algo-$hash", $directive);
-	}
-
-	/**
 	 * Adds a nonce to a directive, re-using default-src actual values.
 	 *
 	 * @param string $nonce
