@@ -22,7 +22,7 @@ class ContentSecurityManager {
 
 	private static string $hashAlgo = 'sha256';
 
-	private static ?callable $onGenerate;
+	private static $onGenerate;
 
 	/**
 	 * Starts the Content Security Policies manager.
