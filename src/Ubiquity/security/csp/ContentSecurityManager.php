@@ -62,7 +62,8 @@ class ContentSecurityManager {
 	public static function getHash(string $name, string $code, string $algo = 'sha256'): string {
 		$code = \preg_replace('/\r\n/', '\n', $code);
 		$hash = \base64_encode(\hash($algo, $code, true));
-		if (isset(self::$onGenerate) && ! URequest::isAjax()) {
+		$hash="$algo-$hash";
+		if (isset(self::$onGenerate) && !URequest::isAjax()) {
 			$onG = self::$onGenerate;
 			$onG($name, $hash, $algo);
 		}
@@ -114,7 +115,7 @@ class ContentSecurityManager {
 	 * @return ContentSecurity
 	 */
 	public static function defaultUbiquity(?bool $reportOnly = null): ContentSecurity {
-		return self::$csp[] = ContentSecurity::defaultUbiquity()->reportOnly($reportOnly);
+		return self::$csp['defaultUbiquity'] ??= ContentSecurity::defaultUbiquity()->reportOnly($reportOnly);
 	}
 
 	/**
@@ -125,7 +126,7 @@ class ContentSecurityManager {
 	 * @return ContentSecurity
 	 */
 	public static function defaultUbiquityDebug(?bool $reportOnly = null, string $livereloadServer = '127.0.0.1:35729'): ContentSecurity {
-		return self::$csp[] = ContentSecurity::defaultUbiquityDebug($livereloadServer)->reportOnly($reportOnly);
+		return self::$csp['defaultUbiquity'] ??= ContentSecurity::defaultUbiquityDebug($livereloadServer)->reportOnly($reportOnly);
 	}
 
 	/**
