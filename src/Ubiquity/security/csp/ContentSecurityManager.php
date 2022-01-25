@@ -62,8 +62,8 @@ class ContentSecurityManager {
 	public static function getHash(string $name, string $code, string $algo = 'sha256'): string {
 		$code = \preg_replace('/\r\n/', '\n', $code);
 		$hash = \base64_encode(\hash($algo, $code, true));
-		$hash="$algo-$hash";
-		if (isset(self::$onGenerate) && !URequest::isAjax()) {
+		$hash = "$algo-$hash";
+		if (isset(self::$onGenerate) && ! URequest::isAjax()) {
 			$onG = self::$onGenerate;
 			$onG($name, $hash, $algo);
 		}
@@ -99,6 +99,16 @@ class ContentSecurityManager {
 	 */
 	public static function addCsp(?bool $reportOnly = null): ContentSecurity {
 		return self::$csp[] = new ContentSecurity($reportOnly ?? self::$reportOnly);
+	}
+
+	/**
+	 * Returns a default ContentSecurity object.
+	 *
+	 * @param bool $reportOnly
+	 * @return ContentSecurity
+	 */
+	public static function defaultCsp(?bool $reportOnly = null): ContentSecurity {
+		return self::$csp['default'] ??= new ContentSecurity($reportOnly ?? self::$reportOnly);
 	}
 
 	/**
