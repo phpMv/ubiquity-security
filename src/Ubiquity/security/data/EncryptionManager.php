@@ -8,7 +8,7 @@ use Ubiquity\controllers\Startup;
  * This class is part of Ubiquity
  *
  * @author jc
- * @version 1.0.0
+ * @version 1.0.1
  *
  */
 class EncryptionManager {
@@ -39,8 +39,10 @@ class EncryptionManager {
 		$key = self::$encryptionInstance->getKey();
 
 		if ($oldKey !== $key) {
-			$config[self::ENCRYPTION_KEY_NAME] = $key;
-			Startup::saveConfig($config);
+			$filename = \ROOT . 'config/config.php';
+			$oConfig = include($filename);
+			$oConfig[self::ENCRYPTION_KEY_NAME] = $key;
+			Startup::saveConfig($oConfig);
 		}
 	}
 
