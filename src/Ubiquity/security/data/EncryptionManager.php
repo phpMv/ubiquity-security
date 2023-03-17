@@ -1,6 +1,8 @@
 <?php
 namespace Ubiquity\security\data;
 
+use Ubiquity\config\Configuration;
+use Ubiquity\config\EnvFile;
 use Ubiquity\controllers\Startup;
 
 /**
@@ -8,12 +10,12 @@ use Ubiquity\controllers\Startup;
  * This class is part of Ubiquity
  *
  * @author jc
- * @version 1.0.1
+ * @version 1.0.2
  *
  */
 class EncryptionManager {
 
-	const ENCRYPTION_KEY_NAME = 'encryption-key';
+	const ENCRYPTION_KEY_NAME = 'encryption_key';
 
 	/**
 	 *
@@ -39,9 +41,11 @@ class EncryptionManager {
 		$key = self::$encryptionInstance->getKey();
 
 		if ($oldKey !== $key) {
-			$filename = \ROOT . 'config/config.php';
-			$oConfig = include($filename);
-			$oConfig[self::ENCRYPTION_KEY_NAME] = $key;
+			$oConfig = Configuration::loadConfigWithoutEval('config');
+			$oConfig[self::ENCRYPTION_KEY_NAME] = "getenv('".self::ENCRYPTION_KEY_NAME."')";
+			$envArray=EnvFile::load();
+			$envArray[self::ENCRYPTION_KEY_NAME]=$key;
+			EnvFile::save($envArray);
 			Startup::saveConfig($oConfig);
 		}
 	}
